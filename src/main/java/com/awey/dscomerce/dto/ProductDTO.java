@@ -1,12 +1,22 @@
 package com.awey.dscomerce.dto;
 
 import com.awey.dscomerce.entities.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public class ProductDTO {
 
     private Long id;
+    @Size(min = 3, max = 80 , message = "O Nome precisa ter entre 3 a 80 caracteres")
+    @NotBlank(message = "Campo requerido")
     private String name;
+
+    @Size(min = 10, message = "A descrição deve ter no minimo 10 caracteres")
+    @NotBlank
     private String description;
+
+    @Positive(message = "O preço deve ser positivo")
     private Double price;
     private String imgUrl;
 
