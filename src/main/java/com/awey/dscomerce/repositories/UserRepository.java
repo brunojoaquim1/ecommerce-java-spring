@@ -1,6 +1,7 @@
 package com.awey.dscomerce.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.awey.dscomerce.entities.User;
 import com.awey.dscomerce.projections.UserDetailsProjection;
@@ -19,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 				WHERE tb_user.email = :email
 			""")
 	List<UserDetailsProjection> searchUserAndRolesByEmail(String email);
+
+    Optional<User> findByEmail(String email);
+
 }

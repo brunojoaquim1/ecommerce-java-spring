@@ -1,6 +1,7 @@
 package com.awey.dscomerce.services;
 
 import com.awey.dscomerce.dto.ProductDTO;
+import com.awey.dscomerce.dto.ProductMinDTO;
 import com.awey.dscomerce.entities.Product;
 import com.awey.dscomerce.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,9 +27,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(String name, Pageable pageable) {
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
         Page<Product> result = repository.serachByName(name,pageable);
-        return result.map(product -> new ProductDTO(product));
+        return result.map(product -> new ProductMinDTO(product));
     }
 
     @Transactional()
