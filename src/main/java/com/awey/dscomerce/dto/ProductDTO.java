@@ -1,9 +1,15 @@
 package com.awey.dscomerce.dto;
 
+import com.awey.dscomerce.entities.Category;
 import com.awey.dscomerce.entities.Product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import org.apache.logging.log4j.message.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDTO {
 
@@ -20,6 +26,9 @@ public class ProductDTO {
     private Double price;
     private String imgUrl;
 
+    @NotEmpty(message = "Deve ter pelo menos uma categoria")
+    private List<CategoryDTO> categories = new ArrayList<>();
+
     public ProductDTO(){}
 
     public ProductDTO(Long id, String name, String description, Double price, String imgUrl) {
@@ -30,12 +39,19 @@ public class ProductDTO {
         this.imgUrl = imgUrl;
     }
 
+
     public ProductDTO(Product product) {
         id = product.getId();
         name = product.getName();
         description = product.getDescription();
         price = product.getPrice();
         imgUrl = product.getImgUrl();
+
+
+        categories = product.getCategories()
+                .stream()
+                .map(CategoryDTO::new) // cria um CategoryDTO a partir da entidade Category
+                .toList();
     }
 
     public Long getId() {
@@ -56,5 +72,9 @@ public class ProductDTO {
 
     public String getImgUrl() {
         return imgUrl;
+    }
+
+    public List<CategoryDTO> getCategories() {
+        return categories;
     }
 }

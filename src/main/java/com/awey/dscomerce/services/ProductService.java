@@ -1,9 +1,12 @@
 package com.awey.dscomerce.services;
 
+import com.awey.dscomerce.dto.CategoryDTO;
 import com.awey.dscomerce.dto.ProductDTO;
 import com.awey.dscomerce.dto.ProductMinDTO;
+import com.awey.dscomerce.entities.Category;
 import com.awey.dscomerce.entities.Product;
 import com.awey.dscomerce.repositories.ProductRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +22,9 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Transactional(readOnly = true)
     public ProductDTO findByID(Long id) {
         Product product = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Recurso não encontrado"));
@@ -32,11 +38,18 @@ public class ProductService {
         return result.map(product -> new ProductMinDTO(product));
     }
 
-    @Transactional()
+    @Transactional
     public ProductDTO insert(ProductDTO dto) {
         Product entity = new Product();
-        copyDtoToEntity(dto,entity);
+        copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        entity = repository.searchProductWithCategories(entity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+
         return new ProductDTO(entity);
     }
 
@@ -46,6 +59,12 @@ public class ProductService {
             Product entity = repository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
+
+            entityManager.flush();
+            entityManager.clear();
+
+            entity = repository.searchProductWithCategories(entity.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
             return new ProductDTO(entity);
         }
         catch (EntityNotFoundException e){
@@ -70,6 +89,13 @@ public class ProductService {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategories().clear();
+        for (CategoryDTO catDto : dto.getCategories()) {
+            Category category = new Category();
+            category.setId(catDto.getId());
+            entity.getCategories().add(category);
+        }
     }
 
 
