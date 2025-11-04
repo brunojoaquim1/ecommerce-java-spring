@@ -2,10 +2,7 @@ package com.awey.dscomerce.dto;
 
 import com.awey.dscomerce.entities.Category;
 import com.awey.dscomerce.entities.Product;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.apache.logging.log4j.message.Message;
 
 import java.util.ArrayList;
@@ -23,6 +20,7 @@ public class ProductDTO {
     private String description;
 
     @Positive(message = "O preço deve ser positivo")
+    @NotNull(message = "Campo requerido")
     private Double price;
     private String imgUrl;
 
