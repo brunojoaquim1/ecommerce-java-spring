@@ -6,6 +6,7 @@ import com.awey.dscomerce.entities.*;
 import com.awey.dscomerce.repositories.OrderItemRepository;
 import com.awey.dscomerce.repositories.OrderRepository;
 import com.awey.dscomerce.repositories.ProductRepository;
+import com.awey.dscomerce.services.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +28,13 @@ public class OrderService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
+    private AuthService authService;
+
     @Transactional(readOnly = true)
     public OrderDTO findByID(Long id) {
         Order order = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Recurso não encontrado"));
+        authService.validateSelOrAdmin(order.getClient().getId());
         return new OrderDTO(order);
     }
 
@@ -61,7 +66,7 @@ public class OrderService {
         repository.save(order);
 
         orderItemRepository.saveAll(order.getItems());
-        
+
         return new OrderDTO(order);
 
     }

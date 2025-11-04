@@ -6,6 +6,8 @@ import com.awey.dscomerce.dto.ProductMinDTO;
 import com.awey.dscomerce.entities.Category;
 import com.awey.dscomerce.entities.Product;
 import com.awey.dscomerce.repositories.ProductRepository;
+import com.awey.dscomerce.services.exception.DatabaseException;
+import com.awey.dscomerce.services.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,8 +2,9 @@ package com.awey.dscomerce.controllers.handlers;
 
 import com.awey.dscomerce.dto.CustomError;
 import com.awey.dscomerce.dto.ValidationError;
-import com.awey.dscomerce.services.DatabaseException;
-import com.awey.dscomerce.services.ResourceNotFoundException;
+import com.awey.dscomerce.services.exception.DatabaseException;
+import com.awey.dscomerce.services.exception.ForbidenException;
+import com.awey.dscomerce.services.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,13 @@ public class ControllerExceptionHandler {
         for (FieldError field: e.getBindingResult().getFieldErrors()){
             err.addError(field.getField(), field.getDefaultMessage());
         }
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(ForbidenException.class)
+    public ResponseEntity<CustomError> forbiden (ForbidenException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        CustomError err = new CustomError(request.getRequestURI(),e.getMessage(), status.value(),Instant.now());
         return ResponseEntity.status(status).body(err);
     }
 }
